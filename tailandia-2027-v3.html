@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tailândia · 16–31 jan 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<style>
+:root{
+  --bg:#F4ECDE; --card:#FFFBF3; --rule:#E4D7C3; --dark:#123330;
+  --ink:#231A12; --ink2:#6B594A; --ink3:#9C8A76;
+  --bkk:#C9741B; --cnx:#A8482A; --sea:#0E7C7B; --air:#66808A;
+  --warn:#AA3320; --warnbg:#F8E2D6; --ok:#2F6B4F; --okbg:#E0EDE4;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:Karla,-apple-system,BlinkMacSystemFont,sans-serif;font-size:16.5px;line-height:1.55}
+.wrap{max-width:68rem;margin:0 auto;padding:0 1.2rem}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:600;letter-spacing:-.018em}
+b,strong{font-weight:700}
+.eyebrow{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+
+/* header */
+header{background:var(--dark);color:#F1E8D8;padding:2.2rem 0 0}
+.htop{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem 2rem}
+header h1{font-size:clamp(2.2rem,7vw,3.6rem);line-height:1;color:#fff}
+header .eyebrow{color:#8AA49B;margin-bottom:.35rem}
+.meta{display:flex;flex-wrap:wrap;gap:.3rem 2rem;font-size:.86rem;color:#AEC2B9}
+.meta b{display:block;color:#F1E8D8;font-size:.95rem;font-weight:700}
+.legs{display:flex;overflow-x:auto;gap:.6rem;padding:1.6rem 0 1.8rem}
+.leg{flex:0 0 auto;min-width:7.2rem}
+.leg i{display:block;height:5px;border-radius:3px;margin-bottom:.5rem;background:var(--c)}
+.leg b{font-family:Fraunces,serif;font-size:1.35rem;color:#fff;display:block;line-height:1;font-weight:600}
+.leg b span{font-size:.46em;font-family:Karla,sans-serif;font-weight:400;color:#8AA49B;margin-left:.25rem}
+.leg u{display:block;text-decoration:none;font-size:.9rem;color:#D3DFD8;margin-top:.2rem}
+.leg em{display:block;font-style:normal;font-size:.76rem;color:#7F9891}
+
+/* nav */
+nav{position:sticky;top:0;z-index:40;background:rgba(244,236,222,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--rule)}
+nav .wrap{display:flex;gap:.4rem;padding-top:.5rem;padding-bottom:.5rem}
+nav button{font:inherit;font-size:.92rem;font-weight:500;cursor:pointer;border:1px solid var(--rule);background:transparent;color:var(--ink2);padding:.38rem .95rem;border-radius:999px}
+nav button[aria-selected="true"]{background:var(--dark);border-color:var(--dark);color:#fff}
+
+main{padding:1.6rem 0 4rem}
+.pane[hidden]{display:none}
+
+/* dias */
+.chips{display:flex;overflow-x:auto;gap:.4rem;padding-bottom:.9rem}
+.chip{flex:0 0 auto;cursor:pointer;font:inherit;text-align:left;background:var(--card);color:var(--ink2);border:1px solid var(--rule);border-top:3px solid var(--c);border-radius:8px;padding:.4rem .65rem .45rem;min-width:5rem}
+.chip .cd{font-family:Fraunces,serif;font-size:1.15rem;font-weight:600;display:block;line-height:1.1;color:var(--ink)}
+.chip .cm{display:block;font-size:.7rem;opacity:.75}
+.chip .cc{display:block;font-size:.72rem;margin-top:.15rem;font-weight:700;color:var(--c)}
+.chip[aria-selected="true"]{background:var(--c);border-color:var(--c)}
+.chip[aria-selected="true"] .cd,.chip[aria-selected="true"] .cm,.chip[aria-selected="true"] .cc{color:#fff}
+
+.daygrid{display:grid;gap:1.1rem}
+.box{background:var(--card);border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.dhead{border-left:4px solid var(--c);padding:1.1rem 1.2rem}
+.dhead .dl{font-size:.85rem;color:var(--ink3)}
+.dhead h2{font-size:1.5rem;margin-top:.1rem}
+.dbody{padding:0 1.2rem 1.2rem}
+.map{height:300px;border-radius:10px;border:1px solid var(--rule);background:#EADFCD;z-index:1}
+.lbl{background:rgba(255,251,243,.92);border:1px solid var(--rule);border-radius:5px;padding:1px 6px;font:700 11px Karla,sans-serif;color:var(--ink);box-shadow:none}
+.lbl::before{display:none}
+.distbox{background:rgba(255,251,243,.92);border:1px solid var(--rule);border-radius:5px;padding:2px 7px;font:700 11px Karla,sans-serif;color:var(--ink2)}
+.semtiles{position:absolute;inset:auto 8px 8px 8px;z-index:500;background:rgba(255,251,243,.94);border:1px solid var(--rule);border-radius:8px;padding:.5rem .7rem;font-size:.78rem;color:var(--ink2);text-align:center}
+.maprow{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-top:.45rem;font-size:.82rem;color:var(--ink3)}
+.maprow a{color:var(--sea);text-decoration:none;font-weight:700;white-space:nowrap}
+.items{list-style:none;margin-top:1.2rem}
+.items li{display:flex;gap:.8rem;padding:.5rem 0;border-bottom:1px dashed var(--rule)}
+.items li:last-child{border-bottom:0}
+.items .t{flex:0 0 3.2rem;text-align:right;font-size:.82rem;color:var(--ink3);font-variant-numeric:tabular-nums;padding-top:.12rem;font-weight:700}
+.items li.w,.items li.w .t{color:var(--warn)}
+.items li.c,.items li.tip{font-size:.92rem;color:var(--ink2)}
+.star{color:var(--bkk);font-weight:700}
+.stay{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--c);border-radius:12px;padding:1rem 1.2rem}
+.stay .nm{font-family:Fraunces,serif;font-weight:600;font-size:1.15rem;margin-top:.2rem}
+.stay .dt{font-size:.9rem;color:var(--ink2);margin-top:.1rem}
+
+/* badges */
+.badge{display:inline-block;font-size:.68rem;font-weight:700;padding:.1rem .5rem;border-radius:999px}
+.badge.ok{background:var(--ok);color:#fff}
+.badge.w{background:var(--warn);color:#fff}
+.badge.n{background:var(--rule);color:var(--ink2)}
+
+/* reservas */
+.summary{display:flex;flex-wrap:wrap;gap:1rem 2.4rem;align-items:flex-end;background:var(--dark);color:#F1E8D8;border-radius:12px;padding:1.2rem 1.3rem;margin-bottom:1.4rem}
+.summary .eyebrow{color:#8AA49B}
+.summary .big{font-family:Fraunces,serif;font-size:2rem;font-weight:600;line-height:1.1;color:#fff}
+.summary .sub{font-size:.85rem;color:#AEC2B9}
+h2.sec{font-size:1.35rem;margin:2rem 0 .9rem}
+h2.sec:first-of-type{margin-top:0}
+.cards{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr))}
+.bcard{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--ok);border-radius:10px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.45rem}
+.bcard.pend{border-left-color:var(--warn)}
+.bcard .top{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center}
+.bcard .ref{font-size:.76rem;color:var(--ink3)}
+.bcard h3{font-size:1.1rem}
+.bcard .det{font-size:.88rem;color:var(--ink2)}
+.bcard .foot{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-top:auto;padding-top:.5rem;border-top:1px solid var(--rule)}
+.bcard .what{font-size:.8rem;color:var(--ink3)}
+.bcard .val{font-family:Fraunces,serif;font-size:1.25rem;font-weight:600}
+.alert{border-radius:10px;padding:1rem 1.1rem;margin-top:1.1rem;border:1px solid var(--rule);border-left:4px solid var(--warn);background:var(--warnbg)}
+.alert h3{font-size:1.05rem;margin:.4rem 0 .3rem}
+.alert p{font-size:.92rem;max-width:46rem}
+.rows{background:var(--card);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.row{display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem 1rem;padding:.8rem 1.1rem;border-bottom:1px solid var(--rule)}
+.row:last-child{border-bottom:0}
+.row .l{flex:1 1 14rem;min-width:0}
+.row .l b{font-size:.96rem}
+.row .l span{display:block;font-size:.85rem;color:var(--ink2)}
+.row .r{flex:0 0 auto;display:flex;align-items:baseline;gap:.8rem}
+.row .r .v{font-size:.88rem;color:var(--ink3)}
+.note{font-size:.85rem;color:var(--ink3);margin-top:.8rem}
+
+/* checklist */
+.chead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.6rem 1.4rem;margin-bottom:1.2rem}
+.chead h2{font-size:1.5rem}
+.chead .right{display:flex;align-items:center;gap:.8rem}
+.chead .prog{font-size:.88rem;color:var(--ink2)}
+.chead button{font:inherit;font-size:.82rem;cursor:pointer;background:none;border:1px solid var(--rule);border-radius:999px;padding:.2rem .7rem;color:var(--ink2)}
+.groups{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,24rem),1fr))}
+.group{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:1.1rem 1.2rem}
+.group h3{font-size:1.2rem;margin:.1rem 0 .9rem}
+.group ul{list-style:none}
+.group li{border-bottom:1px solid var(--rule)}
+.group li:last-child{border-bottom:0}
+.group label{display:flex;gap:.7rem;align-items:flex-start;padding:.7rem 0;cursor:pointer}
+.group input{margin:.25rem 0 0;width:1.1rem;height:1.1rem;accent-color:var(--ok);flex:0 0 auto}
+.group .ct{display:block;font-weight:700;font-size:.96rem}
+.group .cn{display:block;font-size:.87rem;color:var(--ink2)}
+.group li.done .ct{text-decoration:line-through;color:var(--ink3)}
+
+footer{background:var(--dark);color:#AEC2B9;padding:2.2rem 0;font-size:.92rem}
+footer b{color:#F1E8D8;font-family:Fraunces,serif;font-weight:600;font-size:1.05rem;display:block;margin-bottom:.35rem}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="htop">
+      <div>
+        <p class="eyebrow">15 noites · 3 pessoas</p>
+        <h1>Tailândia</h1>
+      </div>
+      <div class="meta">
+        <div><b>Chegada</b>16/01 · BKK 17:40</div>
+        <div><b>Volta</b>31/01 · BKK 14:15</div>
+        <div><b>Rota de volta</b>BKK → KUL → DOH → GRU</div>
+      </div>
+    </div>
+    <div class="legs" id="legs"></div>
+  </div>
+</header>
+
+<nav><div class="wrap" id="tabs"></div></nav>
+
+<main class="wrap">
+  <div class="pane" id="pane-roteiro">
+    <div class="chips" id="chips"></div>
+    <div class="daygrid" id="daygrid"></div>
+  </div>
+
+  <div class="pane" id="pane-reservas" hidden>
+    <div class="summary">
+      <div>
+        <div class="eyebrow">Pago pelo Daniel</div>
+        <div class="big">R$ 5.432,85</div>
+        <div class="sub">6 hotéis · as 15 noites, com a Carla</div>
+      </div>
+      <div>
+        <div class="eyebrow">A receber da Carla</div>
+        <div class="big">R$ 2.716,43</div>
+        <div class="sub">metade exata dos hotéis</div>
+      </div>
+      <div>
+        <div class="eyebrow">Ainda a reservar</div>
+        <div class="big">6</div>
+        <div class="sub">voos e passeios</div>
+      </div>
+    </div>
+
+    <h2 class="sec">Hotéis · Daniel e Carla</h2>
+    <div class="cards" id="bookings"></div>
+
+    <div class="alert">
+      <span class="badge w">Prazos de cancelamento</span>
+      <h3>Depois destas datas o dinheiro não volta</h3>
+      <p><b>Phuket</b> 29/12/2026, 23h59 · <b>Ao Nang</b> 09/01/2027, meio-dia · <b>Chiang Mai</b> 13/01, 23h59 · <b>Bangkok</b> 15/01, meio-dia · <b>Phi Phi</b> 22/01, 18h. Todos em hora local tailandesa. A última noite, no Cottage, já é não reembolsável.</p>
+    </div>
+
+    <div class="alert">
+      <span class="badge w">Débitos automáticos · Visa 3561</span>
+      <h3>Duas saídas ainda por vir</h3>
+      <p><b>27/12/2026</b> R$ 1.234,04 do Panwaburi e <b>13/01/2027</b> R$ 499,02 do Thana Wisut, ambos sem confirmação prévia. O Vlodge cobra o cartão da reserva por volta de 14/01 — vale confirmar por mensagem se é isso mesmo, porque a propriedade também consta como "só dinheiro".</p>
+    </div>
+
+    <h2 class="sec">Hotéis · Thatiane</h2>
+    <p class="note" style="margin:0 0 .9rem">Quartos próprios, pagos por ela. Não entram no acerto. As 15 noites dela custaram R$ 5.057,45; as suas, divididas com a Carla, saem por R$ 2.716,43 cada.</p>
+    <div class="rows" id="thatiane"></div>
+
+    <h2 class="sec">Ainda não reservado</h2>
+    <div class="rows" id="pendentes"></div>
+    <p class="note">Valores sem reserva são estimativas por pessoa, na faixa "ideal" do orçamento. Total projetado da viagem: R$ 17.265 a R$ 20.650 por pessoa, com a passagem de R$ 7.633.</p>
+  </div>
+
+  <div class="pane" id="pane-checklist" hidden>
+    <div class="chead">
+      <h2>Checklist da viagem</h2>
+      <div class="right">
+        <span class="prog" id="prog">—</span>
+        <button type="button" id="reset">Limpar</button>
+      </div>
+    </div>
+    <div class="groups" id="groups"></div>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  <b>Bangkok 3N → Chiang Mai 4N → Ao Nang 2N → Phi Phi 3N → Phuket 2N → Bangkok 1N</b>
+  16 a 31 de janeiro de 2027. Hospedagem 100% fechada.
+</div></footer>
+
+<script>
+const C = {bkk:"#C9741B", cnx:"#A8482A", sea:"#0E7C7B", air:"#66808A"};
+
+const LEGS = [
+  ["3","noites","Bangkok","16–19/01","bkk"],
+  ["4","noites","Chiang Mai","19–23/01","cnx"],
+  ["2","noites","Ao Nang","23–25/01","sea"],
+  ["3","noites","Phi Phi","25–28/01","sea"],
+  ["2","noites","Phuket","28–30/01","sea"],
+  ["1","noite","Bangkok","30–31/01","bkk"]
+];
+
+const DAYS = [
+ {d:"16",m:"jan sáb",c:"Chegada",r:"air",place:"Bangkok",title:"Chegada",
+  stay:{n:"Thana Wisut Hotel",d:"nº 1658114838502130 · 16 a 19/01, check-in após 14h · Ban Phan Thom, Phra Nakhon · a pé do Grand Palace",s:1},
+  pts:[[13.6900,100.7501,"Suvarnabhumi (BKK)"],[13.7608416,100.5040686,"Thana Wisut Hotel"]],
+  items:[["17:40","Pouso no Suvarnabhumi. Imigração com o QR do TDAC em mãos."],
+   ["18:30","Grab ou táxi até o hotel, 45min a 1h."],
+   ["20:00","Jantar leve perto do hotel e dormir cedo — o dia seguinte começa às 8h."]]},
+
+ {d:"17",m:"jan dom",c:"Templos",r:"bkk",place:"Bangkok",title:"Bangkok clássica",
+  stay:{n:"Thana Wisut Hotel",d:"nº 1658114838502130 · 16 a 19/01 · Phra Nakhon",s:1},
+  pts:[[13.7498558,100.4915765,"Grand Palace"],[13.7464237,100.4927733,"Wat Pho"],[13.7438652,100.4884440,"Wat Arun"],[13.7346704,100.5134411,"Talat Noi"]],
+  items:[["08:00","Chegar ao <b>Grand Palace</b> <span class='star'>★</span>. Abre 8h30 — estar na fila antes evita uma hora de espera e o pior do calor."],
+   ["10:30","<b>Wat Pho</b>, o Buda Reclinado, cinco minutos a pé."],
+   ["12:30","Almoço de rua perto do Pak Khlong Talat."],
+   ["14:00","Descanso no hotel. Entre 13h e 16h o calor é insuportável."],
+   ["16:30","Barco cruzando o rio até o <b>Wat Arun</b> <span class='star'>★</span>, com o sol baixando atrás."],
+   ["19:00","Jantar em <b>Talat Noi</b>."],
+   ["21:00","Um rooftop: Lebua, Vertigo ou o Yao, mais em conta."],
+   ["▲","Ombros e joelhos cobertos são obrigatórios nos templos.","w"],
+   ["💡","Khao San fica a 1 km do hotel. Vale uma passada de 30 a 60 min, não uma noite inteira.","tip"]]},
+
+ {d:"18",m:"jan seg",c:"Mercados",r:"bkk",place:"Bangkok",title:"Mercados e Chinatown",
+  stay:{n:"Thana Wisut Hotel",d:"nº 1658114838502130 · 16 a 19/01 · Phra Nakhon",s:1},
+  pts:[[13.4074289,99.9985032,"Maeklong Railway Market"],[13.5201684,99.9586044,"Damnoen Saduak"],[13.7408624,100.5086773,"Yaowarat · Chinatown"]],
+  items:[["05:30","Saída para Samut Songkhram. Van ou tour, nunca por conta própria."],
+   ["08:30","<b>Maeklong Railway Market</b> <span class='star'>★</span> — o trem passando por cima das barracas."],
+   ["10:30","<b>Damnoen Saduak</b>, o mercado flutuante."],
+   ["13:30","Volta a Bangkok."],
+   ["14:30","Descanso no hotel."],
+   ["18:00","<b>Yaowarat / Chinatown</b> <span class='star'>★</span>: comida de rua e neon."],
+   ["19:30","Jantar ali mesmo, de barraca em barraca."],
+   ["฿","Tour: R$150–250 privativo, R$80–120 compartilhado.","c"],
+   ["💡","Dá para pular o mercado flutuante — o Railway é o que justifica acordar às 5h.","tip"]]},
+
+ {d:"19",m:"jan ter",c:"Voo",r:"air",place:"Bangkok → Chiang Mai",title:"Voo para o norte",
+  stay:{n:"Vlodge House",d:"nº 5147.701.377 · 19 a 23/01, check-in 13h–00h, check-out 6h30–11h · Chaiyapoom Soi 1, encostado na Old City",s:1},
+  pts:[[13.7258584,100.5099839,"ICONSIAM"],[13.6900,100.7501,"Aeroporto"],[18.7669,98.9626,"Chiang Mai (CNX)"],[18.7925798,98.9946554,"Vlodge House"]],
+  items:[["10:00","<b>ICONSIAM</b>. Vá de barco, não de carro."],
+   ["13:00","Almoço e tempo livre."],
+   ["15:30","Saída para o aeroporto."],
+   ["18:00","Voo Bangkok → Chiang Mai, 1h20."],
+   ["20:30","Check-in no Vlodge e jantar em Nimman."],
+   ["฿","R$150–300 por pessoa, comprando com antecedência.","c"],
+   ["❓","<b>Em aberto:</b> voar de manhã e ganhar a tarde em Chiang Mai.","tip"]]},
+
+ {d:"20",m:"jan qua",c:"Templos",r:"cnx",place:"Chiang Mai",title:"Cidade velha e templos",
+  stay:{n:"Vlodge House",d:"nº 5147.701.377 · 19 a 23/01 · Chaiyapoom Soi 1",s:1},
+  pts:[[18.8049889,98.9216337,"Doi Suthep"],[18.7961,98.9673,"Nimman"],[18.7889,98.9817,"Wat Phra Singh"],[18.7869693,98.9865804,"Wat Chedi Luang"]],
+  items:[["07:00","<b>Doi Suthep</b> <span class='star'>★</span>. Cedo é luz boa, sem fila e sem calor na subida."],
+   ["10:00","Old City a pé ou de bike: Wat Chedi Luang, Wat Phra Singh, as muralhas. O hotel fica na porta."],
+   ["12:30","Almoço — é aqui que se come <b>khao soi</b> de verdade."],
+   ["15:00","Descanso."],
+   ["18:00","<b>Nimman</b>: jantar, cafés de design e cerveja artesanal."],
+   ["🚕","Songthaew compartilhado R$15–20, ou carro privativo R$60–90.","c"]]},
+
+ {d:"21",m:"jan qui",c:"Elefantes",r:"cnx",place:"Chiang Mai",title:"Elefantes",
+  stay:{n:"Vlodge House",d:"nº 5147.701.377 · 19 a 23/01 · Chaiyapoom Soi 1",s:1},
+  pts:[[18.7850129,98.9929166,"Ponto de encontro · Old City"],[19.2296,98.8556,"Elephant Nature Park · Mae Taeng"]],
+  items:[["07:30","Busca no hotel. O parque fica em Mae Taeng, ~60 km ao norte."],
+   ["09:00","<b>Elephant Nature Park</b> <span class='star'>★</span>: dia inteiro de observação, sem montaria e sem banho forçado. Almoço incluso."],
+   ["17:30","Volta a Chiang Mai."],
+   ["19:30","Jantar tranquilo."],
+   ["฿","฿2.500–3.500 (R$350–500), com transporte, almoço e guia.","c"],
+   ["▲","Reserve com 2 a 3 meses de antecedência. Janeiro esgota.","w"]]},
+
+ {d:"22",m:"jan sex",c:"Chiang Rai",r:"cnx",place:"Chiang Rai",title:"Templo Branco",
+  stay:{n:"Vlodge House",d:"nº 5147.701.377 · 19 a 23/01 · Chaiyapoom Soi 1",s:1},
+  pts:[[18.7883,98.9853,"Chiang Mai · saída 7h"],[19.8232669,99.7627085,"Wat Rong Khun · Templo Branco"],[19.9233952,99.8418735,"Templo Azul"],[19.9423542,99.8115525,"Lalitta Café · Rim Kok"],[19.9920370,99.8607523,"Baan Dam · Black House"]],
+  items:[["07:00","Saída de Chiang Mai. São 3h de estrada em cada trecho."],
+   ["10:00","<b>Wat Rong Khun</b>, o Templo Branco <span class='star'>★</span>. Ingresso ฿200."],
+   ["11:30","<b>Wat Rong Suea Ten</b>, o Templo Azul. Gratuito."],
+   ["12:30","Almoço em Chiang Rai."],
+   ["14:00","<b>Baan Dam</b>, a Black House — o lado sombrio do mesmo artista."],
+   ["16:00","<b>Lalitta Café</b>, em Rim Kok: jardim cenográfico com neblina e cascata. Entrada ฿60, não abatida no consumo."],
+   ["17:00","Retorno a Chiang Mai."],
+   ["20:00","Chegada. Jantar leve."],
+   ["฿","Van compartilhada a partir de ฿1.350/pessoa. Carro privativo ฿2.500–3.500 o dia — para duas pessoas, empata.","c"],
+   ["▲","Recuse pacotes com Triângulo Dourado ou Singha Park, e a vila das mulheres girafa.","w"],
+   ["▲","A maioria das vans faz Branco + Azul + Vermelho, sem Baan Dam nem Lalitta. Confirme antes de fechar.","w"]]},
+
+ {d:"23",m:"jan sáb",c:"Voo",r:"air",place:"Chiang Mai → Krabi",title:"Voo para o sul",
+  stay:{n:"Aonang Silver Orchid Resort",d:"Deluxe · Daniel e Carla nº 1658114837825148 · Thatiane nº 1688901163521339 · 23 a 25/01, check-in após 14h · a ~1 km da praia",s:1},
+  pts:[[18.7669,98.9626,"Chiang Mai (CNX)"],[8.0991,98.9862,"Krabi (KBV)"],[8.0314767,98.8306076,"Silver Orchid · Ao Nang"]],
+  items:[["08:00","Café em Nimman e últimas compras."],
+   ["11:00","Check-out — o limite do Vlodge é 11h."],
+   ["13:00","<b>Voo direto Chiang Mai → Krabi.</b> Sem conexão em Bangkok."],
+   ["15:30","Chegada em Krabi, transfer de ~30 min até Ao Nang."],
+   ["16:30","Check-in no Silver Orchid."],
+   ["19:00","Jantar de frutos do mar na praia de Ao Nang <span class='star'>★</span>."],
+   ["฿","Voo R$350–600 por pessoa.","c"],
+   ["▲","As walking streets de Chiang Mai são sábado e domingo à noite: você sai no sábado de manhã e perde as duas.","w"]]},
+
+ {d:"24",m:"jan dom",c:"Railay",r:"sea",place:"Ao Nang",title:"Railay, o dia inteiro",
+  stay:{n:"Aonang Silver Orchid Resort",d:"Deluxe · nº 1658114837825148 · 23 a 25/01",s:1},
+  pts:[[8.0314767,98.8306076,"Silver Orchid Resort"],[8.0323,98.8221,"Ao Nang · longtail"],[8.0132105,98.8370889,"Railay West"],[8.0046094,98.8402551,"Phra Nang e Princess Cave"]],
+  items:[["08:00","Longtail de Ao Nang até <b>Railay</b> <span class='star'>★</span>, 15 a 20 min."],
+   ["08:30","<b>Praia Phra Nang</b>: paredões de calcário, Princess Cave, snorkel leve."],
+   ["12:30","Almoço em Railay."],
+   ["15:00","Praia sem programação."],
+   ["17:30","Pôr do sol em Railay West — vale esperar."],
+   ["19:30","Volta de longtail e jantar em Ao Nang."],
+   ["฿","Longtail R$25–40 ida e volta.","c"],
+   ["💡","É o único dia do sul sem tour marcado. O dia de descanso de verdade.","tip"]]},
+
+ {d:"25",m:"jan seg",c:"Transfer",r:"sea",place:"Ao Nang → Phi Phi",title:"Travessia e viewpoint",
+  stay:{n:"Panmanee Hotel",d:"Double · Daniel e Carla nº 1658114837941050 · Thatiane nº 1688901163564675 · 25 a 28/01, check-in 14h–21h · centro de Ton Sai · sem piscina e sem café da manhã",s:1},
+  pts:[[8.0474397,98.7986249,"Píer Nopparat Thara · ferry 9h30"],[7.7378009,98.7705482,"Ton Sai · Phi Phi"],[7.7390775,98.7722244,"Panmanee Hotel"],[7.7424967,98.7769263,"Phi Phi Viewpoint"]],
+  items:[["07:30","Café da manhã e check-out."],
+   ["08:45","Transfer até o píer de Nopparat Thara, 10 a 15 min."],
+   ["09:30","<b>Ferry para Phi Phi</b>, 1h30. As saídas são só ~9h30 e ~15h30."],
+   ["11:00","Chegada em Ton Sai. Deixe as malas no Panmanee — <b>o check-in só abre às 14h</b>."],
+   ["12:00","Almoço e praia em Long Beach."],
+   ["14:00","Check-in. A recepção aceita entrada até as 21h."],
+   ["16:30","<b>Phi Phi Viewpoint</b> <span class='star'>★</span> no pôr do sol: as duas baías em formato de gravata-borboleta."],
+   ["19:30","Jantar em Ton Sai."],
+   ["฿","Ferry R$100–150 por pessoa. Viewpoint com taxa simbólica de acesso.","c"]]},
+
+ {d:"26",m:"jan ter",c:"Gold Day",r:"sea",place:"Phi Phi",title:"Gold Day Tour",
+  stay:{n:"Panmanee Hotel",d:"Double · nº 1658114837941050 · 25 a 28/01",s:1},
+  pts:[[7.7378009,98.7705482,"Ton Sai · encontro 10:20"],[7.6833555,98.7675080,"Pileh Lagoon"],[7.6781764,98.7656716,"Maya Bay"],[7.8189060,98.7961880,"Bamboo Island"],[7.7402780,98.7703457,"Loh Dalum · à noite"]],
+  items:[["09:00","Café da manhã fora — o hotel não serve."],
+   ["10:20","Encontro no restaurante <b>Cozinha Brazuca</b>."],
+   ["11:00","<b>Gold Day Tour</b> <span class='star'>★</span>: Monkey Beach, Viking Cave, snorkel, <b>Pileh Lagoon</b>, <b>Maya Bay</b> (até 1h), <b>Bamboo Island</b>, Nui Bay e Wang Long."],
+   ["18:00","Pôr do sol em alto-mar."],
+   ["19:30","Retorno à ilha, depois do mergulho com plâncton bioluminescente."],
+   ["21:00","<b>Loh Dalum</b> <span class='star'>★</span> — corda de fogo, jogos de bar, música na areia. Cinco minutos a pé do hotel."],
+   ["฿","฿1.500 + ฿400 de taxa do parque = ฿1.900, cerca de R$295 por pessoa.","c"],
+   ["▲","Maya Bay hoje: proibido nadar, atracação em Loh Samah e entrada por passarela.","w"],
+   ["💡","O passeio sai às 11h de propósito: os barcos de Krabi e Phuket lotam Maya Bay entre 8h30 e meio-dia e vão embora depois.","tip"]]},
+
+ {d:"27",m:"jan qua",c:"Livre",r:"sea",place:"Phi Phi",title:"Viewpoint e descanso",
+  stay:{n:"Panmanee Hotel",d:"Double · nº 1658114837941050 · 25 a 28/01",s:1},
+  pts:[[7.7424967,98.7769263,"Viewpoint · amanhecer"],[7.7378009,98.7705482,"Ton Sai"],[7.7402780,98.7703457,"Loh Dalum"]],
+  items:[["06:00","<b>Viewpoint ao amanhecer</b> <span class='star'>★</span>, se não tiver feito no dia 25. Fresco e vazio."],
+   ["09:00","Café da manhã sem hora."],
+   ["11:00","Dia livre de verdade: praia, massagem, nada."],
+   ["19:00","Jantar em Ton Sai."],
+   ["21:00","Segunda rodada em Loh Dalum, se quiser."]]},
+
+ {d:"28",m:"jan qui",c:"Old Town",r:"sea",place:"Phi Phi → Phuket",title:"Travessia e Old Town",
+  stay:{n:"Panwaburi Beachfront Resort",d:"Daniel e Carla nº 1658114838028075 · Thatiane nº 1688901163627270 · 28 a 30/01, check-in após 15h · Cape Panwa",s:1},
+  pts:[[7.7378009,98.7705482,"Ton Sai · ferry da manhã"],[7.8730296,98.4145428,"Rassada Pier · Phuket"],[7.8848002,98.3885120,"Thalang Road · Old Town"],[7.8275763,98.3128423,"Big Buddha"],[7.8468384,98.3369048,"Wat Chalong"],[7.8347056,98.3836127,"Khao Khad Views Tower"],[7.8146263,98.3946191,"Panwaburi · Cape Panwa"]],
+  items:[["08:00","Check-out — o limite é 11h, mas o ferry sai antes."],
+   ["09:00","<b>Ferry Phi Phi → Phuket</b>, Rassada Pier, 1h30 a 2h."],
+   ["11:00","Chegada. Deixe as malas no hotel — o check-in é só às 15h — e siga direto."],
+   ["12:30","<b>Old Phuket Town</b> <span class='star'>★</span>: Thalang Road, Soi Romanee, almoço por ali."],
+   ["15:30","<b>Big Buddha</b> <span class='star'>★</span>."],
+   ["16:30","<b>Wat Chalong</b>."],
+   ["17:30","<b>Khao Khad Views Tower</b>, a 8 min do hotel. Gratuito, vista de 360°."],
+   ["19:30","Jantar no resort ou em Panwa."],
+   ["฿","Ferry R$100–150 por pessoa.","c"],
+   ["💡","Dia cheio. Se quiser aliviar, o Wat Chalong é o corte mais fácil.","tip"]]},
+
+ {d:"29",m:"jan sex",c:"Phang Nga",r:"sea",place:"Phuket",title:"Phang Nga Bay",
+  stay:{n:"Panwaburi Beachfront Resort",d:"nº 1658114838028075 · 28 a 30/01 · Cape Panwa",s:1},
+  pts:[[7.8146263,98.3946191,"Panwaburi · Cape Panwa"],[8.0684938,98.4416952,"Ao Po Grand Marina · saída dos barcos"],[8.2745231,98.5012262,"James Bond Island"],[8.3354322,98.5036047,"Koh Panyee"]],
+  items:[["07:30","Transfer até o píer. Os barcos saem do norte da ilha, ~45 min de Cape Panwa."],
+   ["09:00","<b>Phang Nga Bay</b> <span class='star'>★</span> e <b>James Bond Island</b>."],
+   ["12:00","<b>Koh Panyee</b> <span class='star'>★</span>, a vila de palafitas, de canoa. Almoço lá."],
+   ["16:00","Retorno."],
+   ["19:00","Jantar."],
+   ["฿","R$200–350 por pessoa. Reserve com antecedência.","c"],
+   ["▲","Confirme se o transfer busca em Cape Panwa — é o ponto mais distante dos píeres.","w"]]},
+
+ {d:"30",m:"jan sáb",c:"Voo",r:"air",place:"Phuket → Bangkok",title:"Volta a Bangkok",
+  stay:{n:"The Cottage Suvarnabhumi",d:"nº 1658114838583398 · 30 a 31/01, check-in após 14h, check-out até 12h · Lat Krabang, ~15 min do aeroporto · shuttle a cada 40–60 min · café da manhã incluso",s:1},
+  pts:[[7.8146263,98.3946191,"Panwaburi · praia de Ao Yon"],[8.1132,98.3169,"Phuket (HKT) · ~1h de carro"],[13.6900,100.7501,"Bangkok (BKK)"],[13.7211961,100.7240413,"The Cottage Suvarnabhumi"]],
+  items:[["08:00","Manhã na praia do próprio resort, em Ao Yon. Água calma, quase sem gente."],
+   ["12:00","Check-out."],
+   ["12:30","Saída para o aeroporto — <b>cerca de 1h de Cape Panwa</b>."],
+   ["15:00","Voo Phuket → Bangkok, 1h20."],
+   ["18:00","Chegada. O hotel fica em Lat Krabang, a ~15 min do aeroporto, e tem shuttle próprio."],
+   ["20:00","Jantar de despedida por ali. É subúrbio: conte com o restaurante do hotel ou o shopping Robinson, ao lado."],
+   ["฿","R$150–300 por pessoa.","c"],
+   ["▲","Não pegue voo antes das 15h: o check-out é meio-dia e o trajeto até o HKT é longo.","w"]]},
+
+ {d:"31",m:"jan dom",c:"Embarque",r:"air",place:"Bangkok",title:"Embarque",
+  stay:null,
+  pts:[[13.7211961,100.7240413,"The Cottage Suvarnabhumi · Lat Krabang"],[13.6900,100.7501,"Suvarnabhumi · embarque 14:15"]],
+  items:[["09:00","Café da manhã no hotel, incluso. Manhã sem programação — dá até para usar a piscina."],
+   ["10:45","Shuttle do hotel para o Suvarnabhumi, ~15 min. Sai a cada 40 a 60 min — confirme o horário na recepção na véspera."],
+   ["11:30","Check-in, três horas antes do voo."],
+   ["14:15","Embarque rumo a Kuala Lumpur, Doha e GRU."],
+   ["💡","Ficar em Lat Krabang troca a última noite na cidade por 30 min a menos de trânsito no dia do voo.","tip"]]}
+];
+
+const BOOKINGS = [
+  {name:"Thana Wisut Hotel · Bangkok", ref:"nº 1658114838502130", plat:"Trip.com", status:"A debitar 13/01", ok:0,
+   what:"1 quarto · 3 noites", value:"R$ 499,02",
+   detail:"Ban Phan Thom, Phra Nakhon. 16 a 19/01, check-in após 14h. Cancelamento grátis até 15/01, meio-dia."},
+  {name:"Vlodge House · Chiang Mai", ref:"nº 5147.701.377", plat:"Booking", status:"A pagar", ok:0,
+   what:"Standard Queen · 4 noites", value:"R$ 393",
+   detail:"Chaiyapoom Soi 1, encostado na Old City. 19 a 23/01, check-in 13h–00h, check-out 6h30–11h. ฿2.546,09 — o valor em reais é estimativa e varia com o câmbio. Cancelamento grátis até 13/01, 23h59."},
+  {name:"Aonang Silver Orchid · Ao Nang", ref:"nº 1658114837825148", plat:"Trip.com", status:"Pago", ok:1,
+   what:"Deluxe Room · 2 noites", value:"R$ 927,10",
+   detail:"23 a 25/01, check-in após 14h, check-out até 12h. Sem refeições. A ~1 km da praia. Cancelamento grátis até 09/01, meio-dia."},
+  {name:"Panmanee Hotel · Phi Phi", ref:"nº 1658114837941050", plat:"Trip.com", status:"Pago", ok:1,
+   what:"Double não fumante · 3 noites", value:"R$ 2.239,86",
+   detail:"Centro de Ton Sai, a pé de Loh Dalum. 25 a 28/01, check-in 14h–21h, check-out até 11h. Cancelamento grátis até 22/01, 18h — já com vocês na Tailândia."},
+  {name:"Panwaburi Beachfront · Phuket", ref:"nº 1658114838028075", plat:"Trip.com", status:"A debitar 27/12", ok:0,
+   what:"1 quarto · 2 noites", value:"R$ 1.234,04",
+   detail:"Cape Panwa. 28 a 30/01, check-in após 15h, check-out até 12h. Cancelamento grátis até 29/12, 23h59 — dois dias depois da cobrança."},
+  {name:"The Cottage Suvarnabhumi", ref:"nº 1658114838583398", plat:"Trip.com", status:"Pago", ok:1,
+   what:"Superior Room · 1 noite", value:"R$ 139,83",
+   detail:"Lat Krabang, ~15 min do aeroporto. 30 a 31/01. Não reembolsável e não modificável. Café da manhã incluso e shuttle para o terminal."}
+];
+
+const THATIANE = [
+  ["Thana Wisut · Bangkok","16 a 19/01 · 3 noites","2558708029","R$ 399,24"],
+  ["Vlodge House · Chiang Mai","19 a 23/01 · 4 noites · Booking","6261.967.904","R$ 393"],
+  ["Silver Orchid · Ao Nang","23 a 25/01 · 2 noites","1688901163521339","R$ 907,58"],
+  ["Panmanee · Phi Phi","25 a 28/01 · 3 noites","1688901163564675","R$ 2.220,86"],
+  ["Panwaburi · Phuket","28 a 30/01 · 2 noites · multa de R$ 498,47 até 14/01","1688901163627270","R$ 996,94"],
+  ["The Cottage · Bangkok","30 a 31/01 · 1 noite","1688901164144831","R$ 139,83"]
+];
+
+const PENDENTES = [
+  ["Voos domésticos: BKK–CNX, CNX–KBV, HKT–BKK","Quanto antes, o preço só sobe. No dia 30, nada antes das 15h.","~R$ 1.300","Urgente","w"],
+  ["Elephant Nature Park","2 a 3 meses antes — janeiro esgota","~R$ 430","Urgente","w"],
+  ["Gold Day Tour, Phi Phi","Sem depósito; paga na loja até 1 dia antes","R$ 295","Na chegada","n"],
+  ["Chiang Rai, van ou carro privativo","Confirme se inclui Baan Dam e Lalitta antes de fechar","~R$ 280","Na chegada","n"],
+  ["Phang Nga / James Bond","Confirme se o transfer busca em Cape Panwa","~R$ 280","Dias antes","n"],
+  ["Maeklong e mercado flutuante","Roda todo dia, dá para fechar em Bangkok","~R$ 180","Na chegada","n"]
+];
+
+const CHECK = [
+  {id:"docs", eyebrow:"Obrigatório", title:"Documentos", items:[
+    ["tdac","TDAC — Thailand Digital Arrival Card","Até 72h antes","Gratuito, no site oficial tdac.immigration.go.th. Salve o QR Code, é exigido na chegada. Cuidado com sites intermediários que cobram taxa."],
+    ["febre","Certificado de febre amarela","Tem prazo de emissão","Exigido oficialmente de quem chega direto do Brasil. Cada viajante precisa do seu próprio."],
+    ["passaporte","Passaporte com 6 meses de validade","Checar","Brasileiro tem isenção de visto para turismo."],
+    ["esim","eSIM comprado antes de embarcar","Facilita tudo","Ativa na chegada, sem depender de loja no aeroporto."],
+    ["vouchers","Vouchers salvos offline","Antes de embarcar","Seis reservas suas e seis da Thatiane. O Silver Orchid tem histórico de divergência no check-in."]
+  ]},
+  {id:"res", eyebrow:"A fazer", title:"Reservas", items:[
+    ["voos","Voos domésticos","Urgente","BKK–CNX, CNX–KBV e HKT–BKK. O trecho Chiang Mai–Krabi tem voo direto na Thai AirAsia."],
+    ["elefantes","Elephant Nature Park","2 a 3 meses antes","É o único passeio que precisa de muita antecedência."],
+    ["gold","Gold Day Tour, Phi Phi","Na chegada","Sem depósito; paga na loja até 1 dia antes."],
+    ["chiangrai","Chiang Rai: van ou carro privativo","Na chegada","Para duas pessoas o preço empata. O privativo deixa trocar o Templo Vermelho pelo Baan Dam."],
+    ["phangnga","Phang Nga / James Bond","Dias antes","Confirme se o transfer busca em Cape Panwa."]
+  ]},
+  {id:"dinheiro", eyebrow:"Prazos", title:"Dinheiro e cancelamentos", items:[
+    ["deb1","27/12 · débito de R$ 1.234,04, Phuket","Visa 3561","Sem confirmação prévia. Garanta saldo."],
+    ["canc1","29/12 · Phuket vira não reembolsável","23h59 na Tailândia","Dois dias depois da cobrança. Nessa janela ainda dá para desfazer."],
+    ["canc2","09/01 · Ao Nang vira não reembolsável","Meio-dia na Tailândia","Dá 2h da manhã em Brasília. Na prática, decide no dia 8. Avise a Thatiane."],
+    ["deb2","13/01 · débito de R$ 499,02, Bangkok","Visa 3561","Mesmo dia do prazo do Vlodge."],
+    ["canc3","13/01 · Chiang Mai vira não reembolsável","23h59 na Tailândia","Confirme por mensagem se o Vlodge cobra o cartão ou exige dinheiro no check-in."],
+    ["canc4","15/01 · Bangkok vira não reembolsável","Meio-dia na Tailândia","Vocês já estarão lá."],
+    ["canc5","22/01 · Phi Phi vira não reembolsável","18h na Tailândia","Último prazo, com vocês em Chiang Mai."],
+    ["carla","Acertar R$ 2.716,43 com a Carla","Metade dos 6 hotéis","A Thatiane paga os quartos dela por conta."]
+  ]}
+];
+
+/* ---------- render ---------- */
+const $ = s => document.querySelector(s);
+const el = (t,c) => {const e=document.createElement(t); if(c) e.className=c; return e;};
+
+$("#legs").innerHTML = LEGS.map(([n,u,city,dt,r]) =>
+  `<div class="leg" style="--c:${C[r]}"><i></i><b>${n}<span>${u}</span></b><u>${city}</u><em>${dt}</em></div>`).join("");
+
+const TABS = [["roteiro","Roteiro"],["reservas","Reservas"],["checklist","Checklist"]];
+$("#tabs").innerHTML = TABS.map(([id,label],i) =>
+  `<button type="button" data-tab="${id}" aria-selected="${i===0}">${label}</button>`).join("");
+$("#tabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-tab]"); if(!b) return;
+  TABS.forEach(([id]) => {
+    document.querySelector(`[data-tab="${id}"]`).setAttribute("aria-selected", id===b.dataset.tab);
+    $("#pane-"+id).hidden = id!==b.dataset.tab;
+  });
+  if (b.dataset.tab==="roteiro" && map) setTimeout(()=>map.invalidateSize(),60);
+});
+
+$("#chips").innerHTML = DAYS.map((d,i) =>
+  `<button type="button" class="chip" data-i="${i}" style="--c:${C[d.r]}" aria-selected="${i===0}">
+    <span class="cd">${d.d}</span><span class="cm">${d.m}</span><span class="cc">${d.c}</span></button>`).join("");
+
+let map=null, layer=null, cur=-1;
+
+function renderDay(i){
+  const d = DAYS[i], color = C[d.r];
+  const gmaps = "https://www.google.com/maps/dir/" + d.pts.map(p=>p[0]+","+p[1]).join("/");
+  const rota = d.pts.map((p,n)=>(n+1)+". "+p[2].split(" · ")[0]).join(" → ");
+  $("#daygrid").innerHTML = `
+    <div class="box" style="--c:${color}">
+      <div class="dhead"><div class="dl">${d.d} de janeiro · ${d.place}</div><h2>${d.title}</h2></div>
+      <div class="dbody">
+        <div class="map" id="mapel"></div>
+        <div class="maprow"><span>${rota}</span><a href="${gmaps}" target="_blank" rel="noopener">Abrir no Maps ↗</a></div>
+        <ul class="items">${d.items.map(it=>
+          `<li class="${it[2]||""}"><span class="t">${it[0]}</span><span>${it[1]}</span></li>`).join("")}</ul>
+      </div>
+    </div>
+    ${d.stay ? `<div class="stay" style="--c:${color}">
+      <span class="eyebrow">Onde você dorme</span>
+      <span class="badge ${d.stay.s?"ok":"n"}" style="margin-left:.4rem">${d.stay.s?"reservado":"a reservar"}</span>
+      <div class="nm">${d.stay.n}</div><div class="dt">${d.stay.d}</div></div>` : ""}`;
+  document.querySelectorAll(".chip").forEach(c =>
+    c.setAttribute("aria-selected", Number(c.dataset.i)===i));
+  cur = i;
+  drawMap(d, color);
+}
+
+function semTiles(){
+  const h = $("#mapel");
+  if (!h || h.querySelector(".semtiles")) return;
+  const n = el("div","semtiles");
+  n.textContent = "Mapa base bloqueado neste visualizador — baixe o arquivo e abra no navegador para ver as ruas.";
+  h.appendChild(n);
+}
+
+function drawMap(d, color){
+  const holder = $("#mapel");
+  if (!holder || typeof L === "undefined") return;
+  map = L.map(holder, {scrollWheelZoom:false});
+  const tiles = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+    {attribution:"© OpenStreetMap · © CARTO", maxZoom:20});
+  tiles.on("tileerror", () => {
+    if (map._fallback) { semTiles(); return; }
+    map._fallback = true;
+    map.removeLayer(tiles);
+    const osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {attribution:"© OpenStreetMap", maxZoom:19});
+    osm.on("tileerror", semTiles);
+    osm.addTo(map);
+  });
+  tiles.addTo(map);
+  const ll = d.pts.map(p=>[p[0],p[1]]);
+  if (ll.length>1) L.polyline(ll,{color:color,weight:2.5,opacity:.75,dashArray:"6,7"}).addTo(map);
+  d.pts.forEach((p,n) => {
+    const mk = L.marker([p[0],p[1]], {icon: L.divIcon({className:"",iconSize:[24,24],iconAnchor:[12,12],
+      html:`<div style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${color};color:#fff;font:700 12px Karla,sans-serif;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)">${n+1}</div>`})})
+      .addTo(map).bindPopup("<b>"+p[2]+"</b>");
+    if (d.pts.length <= 7) {
+      mk.bindTooltip(p[2].split(" · ")[0], {permanent:true, direction:"right", offset:[14,0], className:"lbl"});
+    }
+  });
+  // distâncias entre pontos consecutivos, no rodapé do mapa
+  let km = 0;
+  for (let n=1;n<ll.length;n++) km += map.distance(ll[n-1], ll[n]) / 1000;
+  if (km >= 1) {
+    const dist = L.control({position:"bottomleft"});
+    dist.onAdd = () => { const c = el("div","distbox");
+      c.textContent = (km<10 ? km.toFixed(1) : Math.round(km)) + " km no dia"; return c; };
+    dist.addTo(map);
+  }
+  map.fitBounds(L.latLngBounds(ll).pad(0.12), {maxZoom:16});
+  if (ll.length===1) map.setZoom(15);
+}
+
+$("#chips").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if(!b) return;
+  const i = Number(b.dataset.i); if(i===cur) return;
+  renderDay(i);
+});
+
+$("#bookings").innerHTML = BOOKINGS.map(b => `
+  <div class="bcard${b.ok?"":" pend"}">
+    <div class="top"><span class="badge ${b.ok?"ok":"w"}">${b.status}</span><span class="ref">${b.plat} · ${b.ref}</span></div>
+    <h3>${b.name}</h3>
+    <div class="det">${b.detail}</div>
+    <div class="foot"><span class="what">${b.what}</span><span class="val">${b.value}</span></div>
+  </div>`).join("");
+
+$("#thatiane").innerHTML = THATIANE.map(([n,sub,ref,val]) => `
+  <div class="row"><div class="l"><b>${n}</b><span>${sub} · nº ${ref}</span></div>
+  <div class="r"><span class="v">${val}</span></div></div>`).join("")
+  + `<div class="row"><div class="l"><b>Total dela, 15 noites</b><span>quartos próprios, fora do acerto</span></div>
+     <div class="r"><span class="v"><b>R$ 5.057,45</b></span></div></div>`;
+
+$("#pendentes").innerHTML = PENDENTES.map(([item,quando,valor,status,tone]) => `
+  <div class="row"><div class="l"><b>${item}</b><span>${quando}</span></div>
+  <div class="r"><span class="v">${valor}</span><span class="badge ${tone}">${status}</span></div></div>`).join("");
+
+/* ---------- checklist ---------- */
+const KEY = "thai2027-checklist";
+let done = {};
+
+function renderCheck(){
+  $("#groups").innerHTML = CHECK.map(g => `
+    <section class="group">
+      <div class="eyebrow">${g.eyebrow}</div><h3>${g.title}</h3>
+      <ul>${g.items.map(([id,title,tag,note]) => `
+        <li class="${done[id]?"done":""}" data-id="${id}">
+          <label><input type="checkbox" ${done[id]?"checked":""} data-check="${id}">
+          <span><span class="ct">${title}</span><span class="cn">${note}</span>
+          <span class="badge n" style="margin-top:.3rem">${tag}</span></span></label>
+        </li>`).join("")}</ul>
+    </section>`).join("");
+  const total = CHECK.reduce((a,g)=>a+g.items.length,0);
+  const n = Object.values(done).filter(Boolean).length;
+  $("#prog").textContent = `${n} de ${total} feitos`;
+}
+
+async function save(){
+  try { if (window.storage) await window.storage.set(KEY, JSON.stringify(done), false); } catch(e){}
+  try { localStorage.setItem(KEY, JSON.stringify(done)); } catch(e){}
+}
+async function load(){
+  try { if (window.storage){ const r = await window.storage.get(KEY,false); if(r&&r.value) done = JSON.parse(r.value); } } catch(e){}
+  if (!Object.keys(done).length) { try { const raw = localStorage.getItem(KEY); if(raw) done = JSON.parse(raw); } catch(e){} }
+  renderCheck();
+}
+
+$("#groups").addEventListener("change", e => {
+  const c = e.target.closest("[data-check]"); if(!c) return;
+  done[c.dataset.check] = c.checked;
+  c.closest("li").classList.toggle("done", c.checked);
+  const total = CHECK.reduce((a,g)=>a+g.items.length,0);
+  $("#prog").textContent = `${Object.values(done).filter(Boolean).length} de ${total} feitos`;
+  save();
+});
+$("#reset").addEventListener("click", () => { done = {}; renderCheck(); save(); });
+
+renderDay(0);
+load();
+</script>
+</body>
+</html>
